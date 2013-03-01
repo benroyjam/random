@@ -1,0 +1,285 @@
+diff -rupN tor-0.2.2.37/src/or/circuitlist.c tor-0.2.2.37-new/src/or/circuitlist.c
+--- tor-0.2.2.37/src/or/circuitlist.c	2012-06-08 03:39:34.000000000 +0800
++++ tor-0.2.2.37-new/src/or/circuitlist.c	2012-07-02 15:52:51.599744008 +0800
+@@ -996,8 +996,7 @@ circuit_find_to_cannibalize(uint8_t purp
+     if (CIRCUIT_IS_ORIGIN(_circ) &&
+         _circ->state == CIRCUIT_STATE_OPEN &&
+         !_circ->marked_for_close &&
+-        _circ->purpose == CIRCUIT_PURPOSE_C_GENERAL &&
+-        !_circ->timestamp_dirty) {
++        _circ->purpose == CIRCUIT_PURPOSE_C_GENERAL) {
+       origin_circuit_t *circ = TO_ORIGIN_CIRCUIT(_circ);
+       if ((!need_uptime || circ->build_state->need_uptime) &&
+           (!need_capacity || circ->build_state->need_capacity) &&
+@@ -1082,8 +1081,7 @@ circuit_mark_all_unused_circs(void)
+ 
+   for (circ=global_circuitlist; circ; circ = circ->next) {
+     if (CIRCUIT_IS_ORIGIN(circ) &&
+-        !circ->marked_for_close &&
+-        !circ->timestamp_dirty)
++        !circ->marked_for_close)
+       circuit_mark_for_close(circ, END_CIRC_REASON_FINISHED);
+   }
+ }
+@@ -1099,17 +1097,6 @@ circuit_mark_all_unused_circs(void)
+ void
+ circuit_expire_all_dirty_circs(void)
+ {
+-  circuit_t *circ;
+-  or_options_t *options = get_options();
+-
+-  for (circ=global_circuitlist; circ; circ = circ->next) {
+-    if (CIRCUIT_IS_ORIGIN(circ) &&
+-        !circ->marked_for_close &&
+-        circ->timestamp_dirty)
+-      /* XXXX023 This is a screwed-up way to say "This is too dirty
+-       * for new circuits. */
+-      circ->timestamp_dirty -= options->MaxCircuitDirtiness;
+-  }
+ }
+ 
+ /** Mark <b>circ</b> to be closed next time we call
+diff -rupN tor-0.2.2.37/src/or/circuituse.c tor-0.2.2.37-new/src/or/circuituse.c
+--- tor-0.2.2.37/src/or/circuituse.c	2012-06-08 03:39:34.000000000 +0800
++++ tor-0.2.2.37-new/src/or/circuituse.c	2012-07-02 15:58:01.525200903 +0800
+@@ -73,12 +73,6 @@ circuit_is_acceptable(circuit_t *circ, e
+       return 0;
+   }
+ 
+-  if (purpose == CIRCUIT_PURPOSE_C_GENERAL ||
+-      purpose == CIRCUIT_PURPOSE_C_REND_JOINED)
+-    if (circ->timestamp_dirty &&
+-       circ->timestamp_dirty+get_options()->MaxCircuitDirtiness <= now)
+-      return 0;
+-
+   /* decide if this circ is suitable for this conn */
+ 
+   /* for rend circs, circ->cpath->prev is not the last router in the
+@@ -157,22 +151,15 @@ circuit_is_better(circuit_t *a, circuit_
+       /* if it's used but less dirty it's best;
+        * else if it's more recently created it's best
+        */
+-      if (b->timestamp_dirty) {
+-        if (a->timestamp_dirty &&
+-            a->timestamp_dirty > b->timestamp_dirty)
+-          return 1;
+-      } else {
+-        if (a->timestamp_dirty ||
+-            timercmp(&a->timestamp_created, &b->timestamp_created, >))
+-          return 1;
+-        if (CIRCUIT_IS_ORIGIN(b) &&
+-            TO_ORIGIN_CIRCUIT(b)->build_state->is_internal)
+-          /* XXX023 what the heck is this internal thing doing here. I
+-           * think we can get rid of it. circuit_is_acceptable() already
+-           * makes sure that is_internal is exactly what we need it to
+-           * be. -RD */
+-          return 1;
+-      }
++      if (timercmp(&a->timestamp_created, &b->timestamp_created, >))
++        return 1;
++      if (CIRCUIT_IS_ORIGIN(b) &&
++          TO_ORIGIN_CIRCUIT(b)->build_state->is_internal)
++        /* XXX023 what the heck is this internal thing doing here. I
++         * think we can get rid of it. circuit_is_acceptable() already
++         * makes sure that is_internal is exactly what we need it to
++         * be. -RD */
++        return 1;
+       break;
+     case CIRCUIT_PURPOSE_C_INTRODUCE_ACK_WAIT:
+       /* the closer it is to ack_wait the better it is */
+@@ -367,8 +354,7 @@ circuit_expire_building(void)
+           /* c_rend_ready circs measure age since timestamp_dirty,
+            * because that's set when they switch purposes
+            */
+-          if (TO_ORIGIN_CIRCUIT(victim)->rend_data ||
+-              victim->timestamp_dirty > cutoff.tv_sec)
++          if (TO_ORIGIN_CIRCUIT(victim)->rend_data)
+             continue;
+           break;
+         case CIRCUIT_PURPOSE_C_REND_READY_INTRO_ACKED:
+@@ -377,8 +363,6 @@ circuit_expire_building(void)
+            * make an introduction attempt. so timestamp_dirty
+            * will reflect the time since the last attempt.
+            */
+-          if (victim->timestamp_dirty > cutoff.tv_sec)
+-            continue;
+           break;
+       }
+     } else { /* circuit not open, consider recording failure as timeout */
+@@ -494,9 +478,7 @@ circuit_stream_is_being_handled(edge_con
+   for (circ=global_circuitlist;circ;circ = circ->next) {
+     if (CIRCUIT_IS_ORIGIN(circ) &&
+         !circ->marked_for_close &&
+-        circ->purpose == CIRCUIT_PURPOSE_C_GENERAL &&
+-        (!circ->timestamp_dirty ||
+-         circ->timestamp_dirty + get_options()->MaxCircuitDirtiness > now)) {
++        circ->purpose == CIRCUIT_PURPOSE_C_GENERAL) {
+       cpath_build_state_t *build_state = TO_ORIGIN_CIRCUIT(circ)->build_state;
+       if (build_state->is_internal || build_state->onehop_tunnel)
+         continue;
+@@ -545,8 +527,6 @@ circuit_predict_and_launch_new(void)
+       continue;
+     if (circ->marked_for_close)
+       continue; /* don't mess with marked circs */
+-    if (circ->timestamp_dirty)
+-      continue; /* only count clean circs */
+     if (circ->purpose != CIRCUIT_PURPOSE_C_GENERAL)
+       continue; /* only pay attention to general-purpose circs */
+     build_state = TO_ORIGIN_CIRCUIT(circ)->build_state;
+@@ -759,16 +739,7 @@ circuit_expire_old_circuits_clientside(v
+     /* If the circuit has been dirty for too long, and there are no streams
+      * on it, mark it for close.
+      */
+-    if (circ->timestamp_dirty &&
+-        circ->timestamp_dirty + get_options()->MaxCircuitDirtiness <
+-          now.tv_sec &&
+-        !TO_ORIGIN_CIRCUIT(circ)->p_streams /* nothing attached */ ) {
+-      log_debug(LD_CIRC, "Closing n_circ_id %d (dirty %ld sec ago, "
+-                "purpose %d)",
+-                circ->n_circ_id, (long)(now.tv_sec - circ->timestamp_dirty),
+-                circ->purpose);
+-      circuit_mark_for_close(circ, END_CIRC_REASON_FINISHED);
+-    } else if (!circ->timestamp_dirty && circ->state == CIRCUIT_STATE_OPEN) {
++    if (circ->state == CIRCUIT_STATE_OPEN) {
+       if (timercmp(&circ->timestamp_created, &cutoff, <)) {
+         if (circ->purpose == CIRCUIT_PURPOSE_C_GENERAL ||
+                 circ->purpose == CIRCUIT_PURPOSE_C_MEASURE_TIMEOUT ||
+@@ -1556,9 +1527,6 @@ connection_ap_handshake_attach_chosen_ci
+ 
+   conn->_base.state = AP_CONN_STATE_CIRCUIT_WAIT;
+ 
+-  if (!circ->_base.timestamp_dirty)
+-    circ->_base.timestamp_dirty = time(NULL);
+-
+   link_apconn_to_circ(conn, circ, cpath);
+   tor_assert(conn->socks_request);
+   if (conn->socks_request->command == SOCKS_COMMAND_CONNECT) {
+@@ -1682,7 +1650,6 @@ connection_ap_handshake_attach_circuit(e
+        * expensive. There is a tradeoff between linkability and
+        * feasibility, at this point.
+        */
+-      rendcirc->_base.timestamp_dirty = time(NULL);
+       link_apconn_to_circ(conn, rendcirc, NULL);
+       if (connection_ap_handshake_send_begin(conn) < 0)
+         return 0; /* already marked, let them fade away */
+@@ -1747,8 +1714,6 @@ connection_ap_handshake_attach_circuit(e
+                  conn_age);
+         switch (rend_client_send_introduction(introcirc, rendcirc)) {
+         case 0: /* success */
+-          rendcirc->_base.timestamp_dirty = time(NULL);
+-          introcirc->_base.timestamp_dirty = time(NULL);
+           assert_circuit_ok(TO_CIRCUIT(rendcirc));
+           assert_circuit_ok(TO_CIRCUIT(introcirc));
+           return 0;
+diff -rupN tor-0.2.2.37/src/or/connection_edge.c tor-0.2.2.37-new/src/or/connection_edge.c
+--- tor-0.2.2.37/src/or/connection_edge.c	2012-06-08 03:39:34.000000000 +0800
++++ tor-0.2.2.37-new/src/or/connection_edge.c	2012-07-02 15:58:33.650342073 +0800
+@@ -518,8 +518,6 @@ connection_ap_expire_beginning(void)
+      * current streams on it to survive if they can: make it
+      * unattractive to use for new streams */
+     /* XXXX023 this is a kludgy way to do this. */
+-    tor_assert(circ->timestamp_dirty);
+-    circ->timestamp_dirty -= options->MaxCircuitDirtiness;
+     /* give our stream another 'cutoff' seconds to try */
+     conn->_base.timestamp_lastread += cutoff;
+     if (conn->num_socks_retries < 250) /* avoid overflow */
+@@ -2295,8 +2293,6 @@ connection_ap_handshake_send_begin(edge_
+ 
+     /* Mark this circuit "unusable for new streams". */
+     /* XXXX023 this is a kludgy way to do this. */
+-    tor_assert(circ->_base.timestamp_dirty);
+-    circ->_base.timestamp_dirty -= get_options()->MaxCircuitDirtiness;
+     return -1;
+   }
+ 
+@@ -2360,8 +2356,6 @@ connection_ap_handshake_send_resolve(edg
+ 
+     /* Mark this circuit "unusable for new streams". */
+     /* XXXX023 this is a kludgy way to do this. */
+-    tor_assert(circ->_base.timestamp_dirty);
+-    circ->_base.timestamp_dirty -= get_options()->MaxCircuitDirtiness;
+     return -1;
+   }
+ 
+diff -rupN tor-0.2.2.37/src/or/or.h tor-0.2.2.37-new/src/or/or.h
+--- tor-0.2.2.37/src/or/or.h	2012-06-08 03:39:34.000000000 +0800
++++ tor-0.2.2.37-new/src/or/or.h	2012-07-02 15:50:23.494920647 +0800
+@@ -2151,19 +2151,6 @@ typedef struct circuit_t {
+   char *n_conn_onionskin;
+ 
+   struct timeval timestamp_created; /**< When was the circuit created? */
+-  /** When the circuit was first used, or 0 if the circuit is clean.
+-   *
+-   * XXXX023 Note that some code will artifically adjust this value backward
+-   * in time in order to indicate that a circuit shouldn't be used for new
+-   * streams, but that it can stay alive as long as it has streams on it.
+-   * That's a kludge we should fix.
+-   *
+-   * XXX023 The CBT code uses this field to record when HS-related
+-   * circuits entered certain states.  This usage probably won't
+-   * interfere with this field's primary purpose, but we should
+-   * document it more thoroughly to make sure of that.
+-   */
+-  time_t timestamp_dirty;
+ 
+   uint16_t marked_for_close; /**< Should we close this circuit at the end of
+                               * the main loop? (If true, holds the line number
+@@ -3042,7 +3029,7 @@ struct socks_request_t {
+ /********************************* circuitbuild.c **********************/
+ 
+ /** How many hops does a general-purpose circuit have by default? */
+-#define DEFAULT_ROUTE_LEN 3
++#define DEFAULT_ROUTE_LEN 2
+ 
+ /* Circuit Build Timeout "public" structures. */
+ 
+diff -rupN tor-0.2.2.37/src/or/relay.c tor-0.2.2.37-new/src/or/relay.c
+--- tor-0.2.2.37/src/or/relay.c	2012-06-08 03:39:34.000000000 +0800
++++ tor-0.2.2.37-new/src/or/relay.c	2012-07-02 15:58:55.289490430 +0800
+@@ -794,8 +794,6 @@ connection_ap_process_end_not_open(
+           circuit_log_path(LOG_INFO,LD_APP,circ);
+           /* Mark this circuit "unusable for new streams". */
+           /* XXXX023 this is a kludgy way to do this. */
+-          tor_assert(circ->_base.timestamp_dirty);
+-          circ->_base.timestamp_dirty -= get_options()->MaxCircuitDirtiness;
+ 
+           if (conn->chosen_exit_optional) {
+             /* stop wanting a specific exit */
+diff -rupN tor-0.2.2.37/src/or/rendclient.c tor-0.2.2.37-new/src/or/rendclient.c
+--- tor-0.2.2.37/src/or/rendclient.c	2012-06-08 03:39:34.000000000 +0800
++++ tor-0.2.2.37-new/src/or/rendclient.c	2012-07-02 15:59:15.146483781 +0800
+@@ -285,7 +285,6 @@ rend_client_send_introduction(origin_cir
+   /* Set timestamp_dirty, because circuit_expire_building expects it
+    * to specify when a circuit entered the _C_INTRODUCE_ACK_WAIT
+    * state. */
+-  introcirc->_base.timestamp_dirty = time(NULL);
+ 
+   return 0;
+  perm_err:
+@@ -343,7 +342,6 @@ rend_client_introduction_acked(origin_ci
+       /* Set timestamp_dirty, because circuit_expire_building expects
+        * it to specify when a circuit entered the
+        * _C_REND_READY_INTRO_ACKED state. */
+-      rendcirc->_base.timestamp_dirty = time(NULL);
+     } else {
+       log_info(LD_REND,"...Found no rend circ. Dropping on the floor.");
+     }
+@@ -721,7 +719,6 @@ rend_client_rendezvous_acked(origin_circ
+   circ->_base.purpose = CIRCUIT_PURPOSE_C_REND_READY;
+   /* Set timestamp_dirty, because circuit_expire_building expects it
+    * to specify when a circuit entered the _C_REND_READY state. */
+-  circ->_base.timestamp_dirty = time(NULL);
+   /* XXXX023 This is a pretty brute-force approach. It'd be better to
+    * attach only the connections that are waiting on this circuit, rather
+    * than trying to attach them all. See comments bug 743. */
+diff -rupN tor-0.2.2.37/src/or/router.c tor-0.2.2.37-new/src/or/router.c
+--- tor-0.2.2.37/src/or/router.c	2012-06-08 03:39:34.000000000 +0800
++++ tor-0.2.2.37-new/src/or/router.c	2012-07-02 15:59:25.796561263 +0800
+@@ -952,7 +952,6 @@ router_perform_bandwidth_test(int num_ci
+     int i = cells_per_circuit;
+     if (circ->_base.state != CIRCUIT_STATE_OPEN)
+       continue;
+-    circ->_base.timestamp_dirty = now;
+     while (i-- > 0) {
+       if (relay_send_command_from_edge(0, TO_CIRCUIT(circ),
+                                        RELAY_COMMAND_DROP,
