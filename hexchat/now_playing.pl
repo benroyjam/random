@@ -6,7 +6,7 @@ Xchat::register("NowPlaying", "1.0");
 Xchat::print("NowPlaying script loaded\n");
 
 my $xml = new XML::Simple(SuppressEmpty => '');
-my $xmlFile = (-d '/media') ? '/media/WD20EARX/now_playing.xml' : 'F:\now_playing.xml';
+my $xmlFile = (-d '/mnt') ? '/mnt/WD20EARX/now_playing.xml' : 'F:\now_playing.xml';
 
 Xchat::hook_command('np', sub {
 	my $data = $xml->XMLin($xmlFile);
