@@ -17,6 +17,7 @@ function Stream (
 	$processStartInfo.RedirectStandardInput = ($InputStream -ne $null)
 	$processStartInfo.RedirectStandardOutput = $OutputStream
 	$processStartInfo.UseShellExecute = $false
+	$processStartInfo.WorkingDirectory = $PWD
 
 	$process = [System.Diagnostics.Process]::Start($processStartInfo)
 
