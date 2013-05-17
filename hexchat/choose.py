@@ -53,9 +53,11 @@ def try_choose(option, input):
 	matches = decimal_range_regex.match(input)
 	
 	if matches:
-		matches = [float(matches.group(i) or '0') for i in range(1, 5)]
+		matches = [matches.group(i) for i in range(1, 5)]
+		matches[0] = float(matches[0])
+		matches[2] = float(matches[2])
 		
-		if matches[1] > 0 or matches[3] > 0:
+		if matches[1] or matches[3]:
 			response = random.uniform(matches[0], matches[2])
 		else:
 			matches[0], matches[2] = sorted((matches[0], matches[2]))
