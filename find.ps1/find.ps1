@@ -57,7 +57,7 @@ Get-ChildItem -Path * -Include $Name -Recurse -Force | ?{ $_ -is [System.IO.File
   
 	[System.Collections.Generic.ICollection[Microsoft.PowerShell.Commands.MatchInfo]] $result = $null;
 	
-	if ($MatchMode -eq 'AllInLine') {
+	if ($MatchMode -eq 'Any') {
 		$params = @{
 			Pattern = $Pattern
 		}
@@ -97,8 +97,14 @@ Get-ChildItem -Path * -Include $Name -Recurse -Force | ?{ $_ -is [System.IO.File
 						}
 					}
 					
-					'Any' {
-						$result.UnionWith($currentResult)
+					'AllInLine' {
+						if ($result.Count -gt 0 -and $currentResult.Length -gt 0) {
+							$result.IntersectWith($currentResult)
+						}
+						else {
+							$result.Clear()
+							return
+						}
 					}
 				}
 			}
