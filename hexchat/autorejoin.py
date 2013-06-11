@@ -1,6 +1,6 @@
 import hexchat
 
-__module_name__ = 'Autorejoin'
+__module_name__ = 'AutoRejoin'
 __module_version__ = '1.0'
 __module_description__ = ''
 
