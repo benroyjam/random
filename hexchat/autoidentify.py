@@ -13,7 +13,7 @@ def autoidentify_callback(word, word_eol, user_data):
 	result = hexchat.EAT_NONE
 	
 	nickname = word[3]
-	password = hexchat.get_info('nickserv')
+	password = hexchat.get_info('password')
 	
 	if nickname in nicks and password:
 		if word[2] != ghosting_nick:
