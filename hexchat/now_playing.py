@@ -1,14 +1,22 @@
+from __future__ import unicode_literals
+
 import hexchat
 import os
+import sys
 import xml.etree.ElementTree as ET
 
-__module_name__ = 'NowPlaying'
-__module_version__ = '1.0'
-__module_description__ = ''
+__module_name__ = str('NowPlaying')
+__module_version__ = str('1.0')
+__module_description__ = str('')
 
 hexchat.prnt('NowPlaying script loaded')
 
 xml_file = r'/mnt/WD20EARX/now_playing.xml' if os.path.isdir('/mnt') else r'F:\now_playing.xml'
+
+if sys.version_info[0] >= 3:
+	FileNotFoundErrorType = FileNotFoundError
+else:
+	FileNotFoundErrorType = IOError
 
 def nowplaying_callback(word, word_eol, user_data):
 	try:
@@ -55,11 +63,16 @@ def nowplaying_callback(word, word_eol, user_data):
 				message = 'playing {0}'.format(source_url)
 				break
 	
-	except (FileNotFoundError, ET.ParseError):
+	except (FileNotFoundErrorType, ET.ParseError):
 		pass
 	
 	if message:
-		hexchat.command('me is {0}'.format(message))
+		command = 'me is {0}'.format(message)
+		
+		if sys.version_info[0] < 3:
+			command = command.encode('utf-8')
+		
+		hexchat.command(command)
 	else:
 		hexchat.prnt('Error in {0}'.format(xml_file))
 	
