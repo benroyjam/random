@@ -19,9 +19,9 @@ def autoidentify_callback(word, word_eol, user_data):
 		if word[2] != ghosting_nick:
 			hexchat.command('nick {0}'.format(ghosting_nick))
 		
-		hexchat.command('ghost nick {0}'.format(password))
+		hexchat.command('ghost {0} {1}'.format(nickname, password))
 		hexchat.command('nick {0}'.format(nickname))
-		hexchat.command('identify {0}'.format(password))
+		hexchat.command('id {0}'.format(password))
 		result = hexchat.EAT_XCHAT
 	
 	return result
