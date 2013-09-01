@@ -1,6 +1,6 @@
 diff -urpN linux-3.10-ck1.orig/arch/powerpc/platforms/cell/spufs/sched.c linux-3.10-ck1/arch/powerpc/platforms/cell/spufs/sched.c
---- linux-3.10-ck1.orig/arch/powerpc/platforms/cell/spufs/sched.c	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/arch/powerpc/platforms/cell/spufs/sched.c	2013-07-11 01:20:34.983164481 -0700
+--- linux-3.10-ck1.orig/arch/powerpc/platforms/cell/spufs/sched.c	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/arch/powerpc/platforms/cell/spufs/sched.c	2013-09-01 00:15:46.682082336 -0700
 @@ -64,11 +64,6 @@ static struct timer_list spusched_timer;
  static struct timer_list spuloadavg_timer;
  
@@ -14,8 +14,8 @@ diff -urpN linux-3.10-ck1.orig/arch/powerpc/platforms/cell/spufs/sched.c linux-3
   * tick for every 10 CPU scheduler ticks.
   */
 diff -urpN linux-3.10-ck1.orig/arch/x86/Kconfig linux-3.10-ck1/arch/x86/Kconfig
---- linux-3.10-ck1.orig/arch/x86/Kconfig	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/arch/x86/Kconfig	2013-07-11 01:20:36.213171100 -0700
+--- linux-3.10-ck1.orig/arch/x86/Kconfig	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/arch/x86/Kconfig	2013-09-01 00:15:46.724082579 -0700
 @@ -1190,7 +1190,7 @@ config HIGHMEM64G
  endchoice
  
@@ -50,7 +50,7 @@ diff -urpN linux-3.10-ck1.orig/arch/x86/Kconfig linux-3.10-ck1/arch/x86/Kconfig
  config PAGE_OFFSET
 diff -urpN linux-3.10-ck1.orig/Documentation/scheduler/sched-BFS.txt linux-3.10-ck1/Documentation/scheduler/sched-BFS.txt
 --- linux-3.10-ck1.orig/Documentation/scheduler/sched-BFS.txt	1969-12-31 16:00:00.000000000 -0800
-+++ linux-3.10-ck1/Documentation/scheduler/sched-BFS.txt	2013-07-11 01:20:35.107165148 -0700
++++ linux-3.10-ck1/Documentation/scheduler/sched-BFS.txt	2013-09-01 00:15:46.726082590 -0700
 @@ -0,0 +1,347 @@
 +BFS - The Brain Fuck Scheduler by Con Kolivas.
 +
@@ -400,8 +400,8 @@ diff -urpN linux-3.10-ck1.orig/Documentation/scheduler/sched-BFS.txt linux-3.10-
 +
 +Con Kolivas <kernel@kolivas.org> Tue, 5 Apr 2011
 diff -urpN linux-3.10-ck1.orig/Documentation/sysctl/kernel.txt linux-3.10-ck1/Documentation/sysctl/kernel.txt
---- linux-3.10-ck1.orig/Documentation/sysctl/kernel.txt	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/Documentation/sysctl/kernel.txt	2013-07-11 01:20:35.282166090 -0700
+--- linux-3.10-ck1.orig/Documentation/sysctl/kernel.txt	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/Documentation/sysctl/kernel.txt	2013-09-01 00:15:46.734082636 -0700
 @@ -33,6 +33,7 @@ show up in /proc/sys/kernel:
  - domainname
  - hostname
@@ -457,8 +457,8 @@ diff -urpN linux-3.10-ck1.orig/Documentation/sysctl/kernel.txt linux-3.10-ck1/Do
  
  The file rtsig-max can be used to tune the maximum number
 diff -urpN linux-3.10-ck1.orig/drivers/cpufreq/cpufreq.c linux-3.10-ck1/drivers/cpufreq/cpufreq.c
---- linux-3.10-ck1.orig/drivers/cpufreq/cpufreq.c	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/drivers/cpufreq/cpufreq.c	2013-07-11 01:20:35.988169889 -0700
+--- linux-3.10-ck1.orig/drivers/cpufreq/cpufreq.c	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/drivers/cpufreq/cpufreq.c	2013-09-01 00:15:46.747082711 -0700
 @@ -30,6 +30,7 @@
  #include <linux/cpu.h>
  #include <linux/completion.h>
@@ -467,7 +467,7 @@ diff -urpN linux-3.10-ck1.orig/drivers/cpufreq/cpufreq.c linux-3.10-ck1/drivers/
  #include <linux/syscore_ops.h>
  
  #include <trace/events/power.h>
-@@ -1473,6 +1474,12 @@ int __cpufreq_driver_target(struct cpufr
+@@ -1474,6 +1475,12 @@ int __cpufreq_driver_target(struct cpufr
  
  	if (cpufreq_driver->target)
  		retval = cpufreq_driver->target(policy, target_freq, relation);
@@ -481,8 +481,8 @@ diff -urpN linux-3.10-ck1.orig/drivers/cpufreq/cpufreq.c linux-3.10-ck1/drivers/
  	return retval;
  }
 diff -urpN linux-3.10-ck1.orig/drivers/cpufreq/cpufreq_conservative.c linux-3.10-ck1/drivers/cpufreq/cpufreq_conservative.c
---- linux-3.10-ck1.orig/drivers/cpufreq/cpufreq_conservative.c	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/drivers/cpufreq/cpufreq_conservative.c	2013-07-11 01:20:36.155170788 -0700
+--- linux-3.10-ck1.orig/drivers/cpufreq/cpufreq_conservative.c	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/drivers/cpufreq/cpufreq_conservative.c	2013-09-01 00:15:46.749082723 -0700
 @@ -27,8 +27,8 @@
  #include "cpufreq_governor.h"
  
@@ -495,8 +495,8 @@ diff -urpN linux-3.10-ck1.orig/drivers/cpufreq/cpufreq_conservative.c linux-3.10
  #define DEF_SAMPLING_DOWN_FACTOR		(1)
  #define MAX_SAMPLING_DOWN_FACTOR		(10)
 diff -urpN linux-3.10-ck1.orig/drivers/cpufreq/cpufreq_ondemand.c linux-3.10-ck1/drivers/cpufreq/cpufreq_ondemand.c
---- linux-3.10-ck1.orig/drivers/cpufreq/cpufreq_ondemand.c	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/drivers/cpufreq/cpufreq_ondemand.c	2013-07-11 01:20:36.001169959 -0700
+--- linux-3.10-ck1.orig/drivers/cpufreq/cpufreq_ondemand.c	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/drivers/cpufreq/cpufreq_ondemand.c	2013-09-01 00:15:46.770082844 -0700
 @@ -29,8 +29,8 @@
  #include "cpufreq_governor.h"
  
@@ -522,8 +522,8 @@ diff -urpN linux-3.10-ck1.orig/drivers/cpufreq/cpufreq_ondemand.c linux-3.10-ck1
   * Any frequency increase takes it to the maximum frequency. Frequency reduction
   * happens at minimum steps of 5% (default) of current frequency
 diff -urpN linux-3.10-ck1.orig/fs/proc/base.c linux-3.10-ck1/fs/proc/base.c
---- linux-3.10-ck1.orig/fs/proc/base.c	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/fs/proc/base.c	2013-07-11 01:20:35.482167166 -0700
+--- linux-3.10-ck1.orig/fs/proc/base.c	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/fs/proc/base.c	2013-09-01 00:15:46.783082919 -0700
 @@ -339,7 +339,7 @@ static int proc_pid_stack(struct seq_fil
  static int proc_pid_schedstat(struct task_struct *task, char *buffer)
  {
@@ -534,8 +534,8 @@ diff -urpN linux-3.10-ck1.orig/fs/proc/base.c linux-3.10-ck1/fs/proc/base.c
  			task->sched_info.pcount);
  }
 diff -urpN linux-3.10-ck1.orig/include/linux/init_task.h linux-3.10-ck1/include/linux/init_task.h
---- linux-3.10-ck1.orig/include/linux/init_task.h	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/include/linux/init_task.h	2013-07-11 01:20:35.607167839 -0700
+--- linux-3.10-ck1.orig/include/linux/init_task.h	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/include/linux/init_task.h	2013-09-01 00:15:46.789082954 -0700
 @@ -152,12 +152,70 @@ extern struct task_group root_task_group
  # define INIT_VTIME(tsk)
  #endif
@@ -619,8 +619,8 @@ diff -urpN linux-3.10-ck1.orig/include/linux/init_task.h linux-3.10-ck1/include/
  #define INIT_CPU_TIMERS(cpu_timers)					\
  {									\
 diff -urpN linux-3.10-ck1.orig/include/linux/ioprio.h linux-3.10-ck1/include/linux/ioprio.h
---- linux-3.10-ck1.orig/include/linux/ioprio.h	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/include/linux/ioprio.h	2013-07-11 01:20:35.609167849 -0700
+--- linux-3.10-ck1.orig/include/linux/ioprio.h	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/include/linux/ioprio.h	2013-09-01 00:15:46.801083023 -0700
 @@ -52,6 +52,8 @@ enum {
   */
  static inline int task_nice_ioprio(struct task_struct *task)
@@ -631,8 +631,8 @@ diff -urpN linux-3.10-ck1.orig/include/linux/ioprio.h linux-3.10-ck1/include/lin
  }
  
 diff -urpN linux-3.10-ck1.orig/include/linux/jiffies.h linux-3.10-ck1/include/linux/jiffies.h
---- linux-3.10-ck1.orig/include/linux/jiffies.h	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/include/linux/jiffies.h	2013-07-11 01:20:35.827169023 -0700
+--- linux-3.10-ck1.orig/include/linux/jiffies.h	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/include/linux/jiffies.h	2013-09-01 00:15:46.806083052 -0700
 @@ -159,7 +159,7 @@ static inline u64 get_jiffies_64(void)
   * Have the 32 bit jiffies value wrap 5 minutes after boot
   * so jiffies wrap bugs show up earlier.
@@ -643,8 +643,8 @@ diff -urpN linux-3.10-ck1.orig/include/linux/jiffies.h linux-3.10-ck1/include/li
  /*
   * Change timeval to jiffies, trying to avoid the
 diff -urpN linux-3.10-ck1.orig/include/linux/sched/rt.h linux-3.10-ck1/include/linux/sched/rt.h
---- linux-3.10-ck1.orig/include/linux/sched/rt.h	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/include/linux/sched/rt.h	2013-07-11 01:20:36.149170755 -0700
+--- linux-3.10-ck1.orig/include/linux/sched/rt.h	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/include/linux/sched/rt.h	2013-09-01 00:15:46.818083121 -0700
 @@ -14,11 +14,24 @@
   * MAX_RT_PRIO must not be smaller than MAX_USER_RT_PRIO.
   */
@@ -671,8 +671,8 @@ diff -urpN linux-3.10-ck1.orig/include/linux/sched/rt.h linux-3.10-ck1/include/l
  static inline int rt_prio(int prio)
  {
 diff -urpN linux-3.10-ck1.orig/include/linux/sched.h linux-3.10-ck1/include/linux/sched.h
---- linux-3.10-ck1.orig/include/linux/sched.h	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/include/linux/sched.h	2013-07-11 01:20:35.626167941 -0700
+--- linux-3.10-ck1.orig/include/linux/sched.h	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/include/linux/sched.h	2013-09-01 00:15:46.826083167 -0700
 @@ -229,8 +229,6 @@ extern asmlinkage void schedule_tail(str
  extern void init_idle(struct task_struct *idle, int cpu);
  extern void init_idle_bootup_task(struct task_struct *idle);
@@ -814,8 +814,8 @@ diff -urpN linux-3.10-ck1.orig/include/linux/sched.h linux-3.10-ck1/include/linu
  }
  
 diff -urpN linux-3.10-ck1.orig/include/uapi/linux/sched.h linux-3.10-ck1/include/uapi/linux/sched.h
---- linux-3.10-ck1.orig/include/uapi/linux/sched.h	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/include/uapi/linux/sched.h	2013-07-11 01:20:36.116170578 -0700
+--- linux-3.10-ck1.orig/include/uapi/linux/sched.h	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/include/uapi/linux/sched.h	2013-09-01 00:15:46.827083173 -0700
 @@ -37,8 +37,15 @@
  #define SCHED_FIFO		1
  #define SCHED_RR		2
@@ -834,8 +834,8 @@ diff -urpN linux-3.10-ck1.orig/include/uapi/linux/sched.h linux-3.10-ck1/include
  #define SCHED_RESET_ON_FORK     0x40000000
  
 diff -urpN linux-3.10-ck1.orig/init/Kconfig linux-3.10-ck1/init/Kconfig
---- linux-3.10-ck1.orig/init/Kconfig	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/init/Kconfig	2013-07-11 19:58:31.492084991 -0700
+--- linux-3.10-ck1.orig/init/Kconfig	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/init/Kconfig	2013-09-01 00:15:46.843083266 -0700
 @@ -66,6 +66,20 @@ config BUILDTIME_EXTABLE_SORT
  
  menu "General setup"
@@ -948,8 +948,8 @@ diff -urpN linux-3.10-ck1.orig/init/Kconfig linux-3.10-ck1/init/Kconfig
  config MMAP_ALLOW_UNINITIALIZED
  	bool "Allow mmapped anonymous memory to be uninitialized"
 diff -urpN linux-3.10-ck1.orig/init/main.c linux-3.10-ck1/init/main.c
---- linux-3.10-ck1.orig/init/main.c	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/init/main.c	2013-07-11 01:20:35.759168657 -0700
+--- linux-3.10-ck1.orig/init/main.c	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/init/main.c	2013-09-01 00:15:46.852083317 -0700
 @@ -703,7 +703,6 @@ int __init_or_module do_one_initcall(ini
  	return ret;
  }
@@ -968,8 +968,8 @@ diff -urpN linux-3.10-ck1.orig/init/main.c linux-3.10-ck1/init/main.c
  		if (!run_init_process(ramdisk_execute_command))
  			return 0;
 diff -urpN linux-3.10-ck1.orig/kernel/delayacct.c linux-3.10-ck1/kernel/delayacct.c
---- linux-3.10-ck1.orig/kernel/delayacct.c	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/kernel/delayacct.c	2013-07-11 01:20:35.769168710 -0700
+--- linux-3.10-ck1.orig/kernel/delayacct.c	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/kernel/delayacct.c	2013-09-01 00:15:46.869083416 -0700
 @@ -133,7 +133,7 @@ int __delayacct_add_tsk(struct taskstats
  	 */
  	t1 = tsk->sched_info.pcount;
@@ -980,8 +980,8 @@ diff -urpN linux-3.10-ck1.orig/kernel/delayacct.c linux-3.10-ck1/kernel/delayacc
  	d->cpu_count += t1;
  
 diff -urpN linux-3.10-ck1.orig/kernel/exit.c linux-3.10-ck1/kernel/exit.c
---- linux-3.10-ck1.orig/kernel/exit.c	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/kernel/exit.c	2013-07-11 01:20:35.792168834 -0700
+--- linux-3.10-ck1.orig/kernel/exit.c	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/kernel/exit.c	2013-09-01 00:15:46.883083496 -0700
 @@ -135,7 +135,7 @@ static void __exit_signal(struct task_st
  		sig->inblock += task_io_get_inblock(tsk);
  		sig->oublock += task_io_get_oublock(tsk);
@@ -992,8 +992,8 @@ diff -urpN linux-3.10-ck1.orig/kernel/exit.c linux-3.10-ck1/kernel/exit.c
  
  	sig->nr_threads--;
 diff -urpN linux-3.10-ck1.orig/kernel/Kconfig.hz linux-3.10-ck1/kernel/Kconfig.hz
---- linux-3.10-ck1.orig/kernel/Kconfig.hz	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/kernel/Kconfig.hz	2013-07-11 01:20:36.182170933 -0700
+--- linux-3.10-ck1.orig/kernel/Kconfig.hz	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/kernel/Kconfig.hz	2013-09-01 00:15:46.890083537 -0700
 @@ -24,13 +24,14 @@ choice
  	  with lots of processors that may show reduced performance if
  	  too many timer interrupts are occurring.
@@ -1034,8 +1034,8 @@ diff -urpN linux-3.10-ck1.orig/kernel/Kconfig.hz linux-3.10-ck1/kernel/Kconfig.h
  	default 1000 if HZ_1000
  
 diff -urpN linux-3.10-ck1.orig/kernel/Kconfig.preempt linux-3.10-ck1/kernel/Kconfig.preempt
---- linux-3.10-ck1.orig/kernel/Kconfig.preempt	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/kernel/Kconfig.preempt	2013-07-11 01:20:36.173170885 -0700
+--- linux-3.10-ck1.orig/kernel/Kconfig.preempt	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/kernel/Kconfig.preempt	2013-09-01 00:15:46.902083606 -0700
 @@ -18,7 +18,7 @@ config PREEMPT_NONE
  	  latencies.
  
@@ -1056,8 +1056,8 @@ diff -urpN linux-3.10-ck1.orig/kernel/Kconfig.preempt linux-3.10-ck1/kernel/Kcon
  config PREEMPT
  	bool "Preemptible Kernel (Low-Latency Desktop)"
 diff -urpN linux-3.10-ck1.orig/kernel/posix-cpu-timers.c linux-3.10-ck1/kernel/posix-cpu-timers.c
---- linux-3.10-ck1.orig/kernel/posix-cpu-timers.c	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/kernel/posix-cpu-timers.c	2013-07-11 01:20:35.798168866 -0700
+--- linux-3.10-ck1.orig/kernel/posix-cpu-timers.c	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/kernel/posix-cpu-timers.c	2013-09-01 00:15:46.911083658 -0700
 @@ -498,11 +498,11 @@ void posix_cpu_timers_exit(struct task_s
  {
  	cputime_t utime, stime;
@@ -1119,7 +1119,7 @@ diff -urpN linux-3.10-ck1.orig/kernel/posix-cpu-timers.c linux-3.10-ck1/kernel/p
  		if (task_cputime_expired(&task_sample, &tsk->cputime_expires))
 diff -urpN linux-3.10-ck1.orig/kernel/sched/bfs.c linux-3.10-ck1/kernel/sched/bfs.c
 --- linux-3.10-ck1.orig/kernel/sched/bfs.c	1969-12-31 16:00:00.000000000 -0800
-+++ linux-3.10-ck1/kernel/sched/bfs.c	2013-07-11 01:20:36.018170050 -0700
++++ linux-3.10-ck1/kernel/sched/bfs.c	2013-09-01 00:15:46.923083727 -0700
 @@ -0,0 +1,7423 @@
 +/*
 + *  kernel/sched/bfs.c, was kernel/sched.c
@@ -8545,8 +8545,8 @@ diff -urpN linux-3.10-ck1.orig/kernel/sched/bfs.c linux-3.10-ck1/kernel/sched/bf
 +}
 +#endif
 diff -urpN linux-3.10-ck1.orig/kernel/sched/Makefile linux-3.10-ck1/kernel/sched/Makefile
---- linux-3.10-ck1.orig/kernel/sched/Makefile	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/kernel/sched/Makefile	2013-07-11 01:20:36.165170841 -0700
+--- linux-3.10-ck1.orig/kernel/sched/Makefile	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/kernel/sched/Makefile	2013-09-01 00:15:46.931083773 -0700
 @@ -11,9 +11,13 @@ ifneq ($(CONFIG_SCHED_OMIT_FRAME_POINTER
  CFLAGS_core.o := $(PROFILING) -fno-omit-frame-pointer
  endif
@@ -8564,8 +8564,8 @@ diff -urpN linux-3.10-ck1.orig/kernel/sched/Makefile linux-3.10-ck1/kernel/sched
 +obj-$(CONFIG_SMP) += cpupri.o
 +obj-$(CONFIG_SCHEDSTATS) += stats.o
 diff -urpN linux-3.10-ck1.orig/kernel/stop_machine.c linux-3.10-ck1/kernel/stop_machine.c
---- linux-3.10-ck1.orig/kernel/stop_machine.c	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/kernel/stop_machine.c	2013-07-11 01:20:36.154170782 -0700
+--- linux-3.10-ck1.orig/kernel/stop_machine.c	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/kernel/stop_machine.c	2013-09-01 00:15:46.945083854 -0700
 @@ -40,7 +40,8 @@ struct cpu_stopper {
  };
  
@@ -8577,8 +8577,8 @@ diff -urpN linux-3.10-ck1.orig/kernel/stop_machine.c linux-3.10-ck1/kernel/stop_
  
  static void cpu_stop_init_done(struct cpu_stop_done *done, unsigned int nr_todo)
 diff -urpN linux-3.10-ck1.orig/kernel/sysctl.c linux-3.10-ck1/kernel/sysctl.c
---- linux-3.10-ck1.orig/kernel/sysctl.c	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/kernel/sysctl.c	2013-07-11 20:04:49.352119443 -0700
+--- linux-3.10-ck1.orig/kernel/sysctl.c	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/kernel/sysctl.c	2013-09-01 00:15:46.947083866 -0700
 @@ -128,7 +128,12 @@ static int __maybe_unused one = 1;
  static int __maybe_unused two = 2;
  static int __maybe_unused three = 3;
@@ -8646,8 +8646,8 @@ diff -urpN linux-3.10-ck1.orig/kernel/sysctl.c linux-3.10-ck1/kernel/sysctl.c
  	{
  		.procname	= "spin_retry",
 diff -urpN linux-3.10-ck1.orig/kernel/time/Kconfig linux-3.10-ck1/kernel/time/Kconfig
---- linux-3.10-ck1.orig/kernel/time/Kconfig	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/kernel/time/Kconfig	2013-07-11 01:20:36.171170874 -0700
+--- linux-3.10-ck1.orig/kernel/time/Kconfig	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/kernel/time/Kconfig	2013-09-01 00:15:46.956083918 -0700
 @@ -94,7 +94,7 @@ config NO_HZ_IDLE
  config NO_HZ_FULL
  	bool "Full dynticks system (tickless)"
@@ -8658,8 +8658,8 @@ diff -urpN linux-3.10-ck1.orig/kernel/time/Kconfig linux-3.10-ck1/kernel/time/Kc
  	depends on SMP
  	# RCU_USER_QS dependency
 diff -urpN linux-3.10-ck1.orig/lib/Kconfig.debug linux-3.10-ck1/lib/Kconfig.debug
---- linux-3.10-ck1.orig/lib/Kconfig.debug	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/lib/Kconfig.debug	2013-07-11 01:20:35.815168958 -0700
+--- linux-3.10-ck1.orig/lib/Kconfig.debug	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/lib/Kconfig.debug	2013-09-01 00:15:46.966083975 -0700
 @@ -958,7 +958,7 @@ config SPARSE_RCU_POINTER
  
  config RCU_TORTURE_TEST
@@ -8670,9 +8670,9 @@ diff -urpN linux-3.10-ck1.orig/lib/Kconfig.debug linux-3.10-ck1/lib/Kconfig.debu
  	help
  	  This option provides a kernel module that runs torture tests
 diff -urpN linux-3.10-ck1.orig/Makefile linux-3.10-ck1/Makefile
---- linux-3.10-ck1.orig/Makefile	2013-07-01 06:38:11.000000000 -0700
-+++ linux-3.10-ck1/Makefile	2013-07-11 01:20:36.222171148 -0700
-@@ -10,6 +10,10 @@ NAME = Unicycling Gorilla
+--- linux-3.10-ck1.orig/Makefile	2013-08-29 12:20:20.000000000 -0700
++++ linux-3.10-ck1/Makefile	2013-09-01 00:15:46.978084045 -0700
+@@ -10,6 +10,10 @@ NAME = TOSSUG Baby Fish
  # Comments in this file are targeted only to the developer, do not
  # expect to learn how to build the kernel reading this file.
  
