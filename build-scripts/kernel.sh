@@ -7,7 +7,7 @@ fi
 
 cd /usr/src/linux/
 make distclean &&
-cp `dirname $0`/kernel/3.10-nvidia.config ./.config &&
+cp `dirname $0`/kernel/3.11-nvidia.config ./.config &&
 make -j2 &&
 make modules_install &&
 make install &&
