@@ -45,15 +45,17 @@ def nowplaying_callback(word, word_eol, user_data):
 				message += ' {0}'.format(name.text)
 				
 				for album_title in audio.findall('album_title'):
-					message += ' ({0})'.format(album_title.text)
+					if album_title:
+						message += ' ({0})'.format(album_title.text)
 					break
 				
 				artist = audio.find('artist')
-				if artist is not None:
+				if artist:
 					message += ' by {0}'.format(artist.text)
 				else:
 					for album_artist in audio.findall('album_artist'):
-						message += ' {0}'.format(album_artist.text)
+						if album_artist:
+							message += ' {0}'.format(album_artist.text)
 						break
 				
 				break
