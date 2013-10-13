@@ -15,7 +15,7 @@ def autoinvite_callback(word, word_eol, user_data):
 		if word[0] == channel:
 			hexchat.unhook(invited_hook)
 			hexchat.unhook(denied_hook)
-			invited_result = hexchat.EAT_XCHAT
+			invited_result = hexchat.EAT_HEXCHAT
 			hexchat.command('join {0}'.format(channel))
 		
 		return invited_result
@@ -33,6 +33,6 @@ def autoinvite_callback(word, word_eol, user_data):
 	
 	hexchat.command('msg ChanServ invite {0}'.format(channel))
 	
-	return hexchat.EAT_XCHAT
+	return hexchat.EAT_HEXCHAT
 
 hexchat.hook_print('Invite', autoinvite_callback)

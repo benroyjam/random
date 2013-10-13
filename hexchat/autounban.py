@@ -16,7 +16,7 @@ def banned_callback(word, word_eol, user_data):
 		
 		if re.search(r'{0} has been unbanned from {1}\.'.format(nickname, channel), hexchat.strip(word[1])):
 			hexchat.unhook(notice_hook)
-			unban_result = hexchat.EAT_XCHAT
+			unban_result = hexchat.EAT_HEXCHAT
 			hexchat.command('join {0}'.format(channel))
 		
 		elif word[1] == 'Permission denied.':
@@ -28,6 +28,6 @@ def banned_callback(word, word_eol, user_data):
 	
 	hexchat.command('msg ChanServ unban {0}'.format(channel))
 	
-	return hexchat.EAT_XCHAT
+	return hexchat.EAT_HEXCHAT
 
 hexchat.hook_print('Banned', banned_callback, priority=hexchat.PRI_HIGHEST)

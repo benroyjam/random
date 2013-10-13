@@ -22,7 +22,7 @@ def autoidentify_callback(word, word_eol, user_data):
 		hexchat.command('ghost {0} {1}'.format(nickname, password))
 		hexchat.command('nick {0}'.format(nickname))
 		hexchat.command('id {0}'.format(password))
-		result = hexchat.EAT_XCHAT
+		result = hexchat.EAT_HEXCHAT
 	
 	return result
 
