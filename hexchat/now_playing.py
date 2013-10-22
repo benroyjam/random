@@ -26,7 +26,8 @@ def nowplaying_callback(word, word_eol, user_data):
 		
 		audio = data.find('audio')
 		if audio is not None:
-			for name in data.findall('name'):
+			name = get_child_value(data, 'name')
+			if name is not None:
 				message = 'listening to'
 				
 				disc_number = get_child_int_value(audio, 'disc_number')
@@ -42,23 +43,19 @@ def nowplaying_callback(word, word_eol, user_data):
 				elif track_number is not None:
 					message += ' {0:02d}'.format(track_number)
 				
-				message += ' {0}'.format(name.text)
+				message += ' {0}'.format(name)
 				
-				for album_title in audio.findall('album_title'):
-					if album_title:
-						message += ' ({0})'.format(album_title.text)
-					break
+				album_title = get_child_value(audio, 'album_title')
+				if album_title is not None:
+					message += ' ({0})'.format(album_title)
 				
-				artist = audio.find('artist')
-				if artist:
-					message += ' by {0}'.format(artist.text)
+				artist = get_child_value(audio, 'artist')
+				if artist is not None:
+					message += ' by {0}'.format(artist)
 				else:
-					for album_artist in audio.findall('album_artist'):
-						if album_artist:
-							message += ' {0}'.format(album_artist.text)
-						break
-				
-				break
+					album_artist = get_child_value(audio, 'album_artist')
+					if album_artist is not None:
+						message += ' by {0}'.format(album_artist)
 		
 		else:
 			for source_url in (other.findall('source_url') for other in data.findall('other')):
@@ -80,13 +77,20 @@ def nowplaying_callback(word, word_eol, user_data):
 	
 	return hexchat.EAT_ALL
 
-def get_child_int_value(node, child_name):
+def get_child_value(node, child_name):
 	for child in node.findall(child_name):
-		if child.text:
-			return int(child.text)
+		if child.text is not None:
+			return child.text
 		else:
 			return None
 	
 	return None
+
+def get_child_int_value(node, child_name):
+	result = get_child_value(node, child_name)
+	if result is not None:
+		result = int(result)
+	
+	return result
 
 hexchat.hook_command('np', nowplaying_callback)
