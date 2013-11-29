@@ -6,8 +6,6 @@ declare -A commands
 
 commands[bitcoin]="git pull"
 commands[hexchat]="git pull"
-commands[pyside]="git pull
-git submodule foreach git pull origin master"
 commands[random]="git pull"
 
 for repo in "${!commands[@]}"; do
